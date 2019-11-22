@@ -1,0 +1,9 @@
+Package: migration
+Version: xx
+Section: custom
+Priority: optional
+Architecture: all
+Essential: no
+Installed-Size: 1024
+Maintainer: tomislav.fabeta@gmail.com
+Description: Used for script migration and patching

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/lib/global.sh"
+. "$DIR/lib/applyMigrationVersion.sh"
+. "$DIR/lib/fileScripts.sh"
+. "$DIR/lib/logEvent.sh"
+. "$DIR/lib/migrationVersion.sh"
+. "$DIR/lib/projectType.sh"
+. "$DIR/lib/getLatestMigration.sh"
+. "$DIR/lib/parseYaml.sh"
+. "$DIR/lib/validators.sh"
+. "$DIR/lib/lifecycle.sh"
+
+if [[ -z "$1" ]]; then
+  echo "No argument supplied. Run migration help for a list of commands"
+fi
+
+if [[ "$1" == "help" ]]; then
+  echo "migration init  :   Init Migrations"
+  echo "migration pull  :   Pull migration scripts from server repository"
+  echo "migration up    :   Update migrations"
+  echo "migration down  :   Revert migrations"
+  echo "migration config :   Get config"
+  echo "migration version :   Get current local version"
+  echo "migration reset :   Removes the cache migration folder and configs"
+
+fi
+
+if [[ "$1" == "version" ]]; then
+  if [[ -z "$2" ]]; then
+    packageVersion
+    exit 0
+  fi
+
+  validateInitialization
+  version $2
+fi
+
+if [[ "$1" == "up" ]]; then
+  validateInitialization
+  logVerbose "Running migration up..."
+  up $2
+fi
+
+if [[ "$1" == "down" ]]; then
+  validateInitialization
+  down $2
+fi
+
+if [[ "$1" == "init" ]]; then
+  validateInitialization
+fi
+
+if [[ "$1" == "reset" ]]; then
+  resetMigrationProject
+fi
+
+if [[ "$1" == "config" ]]; then
+  validateInitialization
+  echo "Config: "
+  echo "  git_url: $(getProjectGitUrl)"
+  echo "  template_type: $(getProjectTemplateType)"
+fi
