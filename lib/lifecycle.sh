@@ -5,7 +5,7 @@ up(){
     projectType=$1
     localVersion=$(getCurrentLocalMigrationVersionForTemplateType ${projectType})
 
-    if [ -z $localVersion ]; then
+    if [ -z "$localVersion" ]; then
         localVersion="1.0.0"
 
         else
@@ -14,7 +14,7 @@ up(){
 
     logVerbose "Checking if a new version exists for '$projectType'"
 
-    if [[ $(migrationVersionExist ${projectType} ${localVersion}) == false ]]; then
+    if [[ $(migrationVersionExist "${projectType}" "${localVersion}") == false ]]; then
       logVerbose "[OK] All up to date!"
       version ${projectType}
       exit 0
@@ -30,7 +30,7 @@ up(){
       exit 1
     fi
 
-    up ${projectType}
+    up "${projectType}"
 }
 
 down() {

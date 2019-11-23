@@ -3,15 +3,6 @@
 PROJECT_PATH="./.cache_migrations"
 PROJECT="maven"
 
-declare -A migrationFiles
-migrationFiles[ALL]="$PROJECT_PATH/.history"
-migrationFiles[LATEST]="$PROJECT_PATH/.current"
-migrationFiles[CONFIG]="$PROJECT_PATH/.migration.config"
-
-export MIGRATION_LATEST_PATH=${migrationFiles[LATEST]}
-export MIGRATION_CONFIG_PATH=${migrationFiles[CONFIG]}
-export MIGRATION_ALL_PATH=${migrationFiles[ALL]}
-
 currentLocalMigrationVersion() {
   getCurrentVersionForTemplateType ${PROJECT}
 }
@@ -23,8 +14,9 @@ getCurrentLocalMigrationVersionForTemplateType() {
 pushLocalMigrationVersionToHistory() {
   projectType=$1
   projectVersion=$2
-  initIfHistoryEmptyForTemplateType ${projectType}
-  sed  -i -e "/\ $projectType:/a \ \ \ \ - $projectVersion" ${migrationFiles[ALL]}
+  initIfHistoryEmptyForTemplateType "${projectType}"
+  updatedFileContent=$(sed -e '/'"$projectType":'/a\'$'\n'' \ \ \ \ - '$projectVersion ${FILE_PATH_HISTORY})
+  setFileContent "${updatedFileContent}" "${FILE_PATH_HISTORY}"
 }
 
 popLocalMigrationVersionFromHistory() {
@@ -37,8 +29,8 @@ popLocalMigrationVersionFromHistory() {
     fi
   fi
 
-  sedCommand="/$projectType/{n;d}"
-  sed -i -e "$sedCommand" ${migrationFiles[ALL]}
+  sedCommand="/$projectType/{n;d;}"
+  sed -i.bak -e "$sedCommand" "${FILE_PATH_HISTORY}" && rm ${FILE_PATH_HISTORY}.bak
 }
 
 decCurrentLocalMigrationVersion() {
@@ -63,11 +55,11 @@ setCurrentLocalMigrationVersion() {
     initIfCurrentVersionEmptyForTemplateType ${projectType}
 
     if [[ ! -z ${currentVersion} ]]; then
-        sed -ri "s/$projectType: [0-9|.].*$/$projectType: $projectVersion/" ${migrationFiles[LATEST]}
+        sed -i.bak "s/$projectType: [0-9|.].*$/$projectType: $projectVersion/" ${FILE_PATH_CURRENT} && rm ${FILE_PATH_CURRENT}.bak
         return 0
     fi
 
-    sed -ri "s/$projectType:.*$/$projectType: $projectVersion/" ${migrationFiles[LATEST]}
+    sed -i.bak "s/$projectType:.*$/$projectType: $projectVersion/" ${FILE_PATH_CURRENT} && rm ${FILE_PATH_CURRENT}.bak
 }
 
 getPreviousLocalMigrationVersion() {
@@ -90,12 +82,12 @@ initMigrationProject() {
   pullRepo "$templateUrl"
 
   logVerbose "Creating $PROJECT_PATH config files..."
-  createFile ${migrationFiles[LATEST]}
-  createFile ${migrationFiles[ALL]}
-  createFile ${migrationFiles[CONFIG]}
+  createFile ${FILE_PATH_CURRENT}
+  createFile ${FILE_PATH_HISTORY}
+  createFile ${FILE_PATH_CONFIG}
 
-  appendFileContent "projects:" ${migrationFiles[LATEST]}
-  appendFileContent "projects:" ${migrationFiles[ALL]}
+  appendFileContent "projects:" ${FILE_PATH_CURRENT}
+  appendFileContent "projects:" ${FILE_PATH_HISTORY}
 
   setConfig "$templateUrl" "$templateType"
 }
@@ -104,9 +96,9 @@ setConfig() {
   gitUrl=$1
   templateType=$2
 
-  setFileContent "project:" ${migrationFiles[CONFIG]}
-  appendFileContent "  git_url: $gitUrl" ${migrationFiles[CONFIG]}
-  appendFileContent "  template_type: $templateType" ${migrationFiles[CONFIG]}
+  setFileContent "project:" ${FILE_PATH_CONFIG}
+  appendFileContent "  git_url: $gitUrl" ${FILE_PATH_CONFIG}
+  appendFileContent "  template_type: $templateType" ${FILE_PATH_CONFIG}
 }
 
 resetMigrationProject() {

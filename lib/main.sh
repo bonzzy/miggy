@@ -8,7 +8,7 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/logEvent.sh"
 . "$DIR/fileScripts.sh"
 
-if [[ $(fileExists "${migrationFiles[LATEST]}") -eq 1 ]]; then
+if [[ $(fileExists "${FILE_PATH_CURRENT}") -eq 1 ]]; then
     logVerbose "It seems that this is the first time running this script!"
     logVerbose "Initializing the script migration project"
     initMigrationProject

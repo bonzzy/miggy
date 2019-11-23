@@ -30,37 +30,37 @@ getPreviousVersionForTemplateType() {
 
 initIfHistoryEmptyForTemplateType() {
   templateType=$1
-  typeExistsInCurrent=$(checkIfFileHasString ${templateType} ${migrationFiles[ALL]})
+  typeExistsInCurrent=$(checkIfFileHasString ${templateType} ${FILE_PATH_HISTORY})
 
   if [[ ${typeExistsInCurrent} -eq 1 ]]; then
-    appendFileContent "  $templateType:" ${migrationFiles[ALL]}
+    appendFileContent "  $templateType:" ${FILE_PATH_HISTORY}
   fi
 }
 
 initIfCurrentVersionEmptyForTemplateType() {
   templateType=$1
-  typeExistsInCurrent=$(checkIfFileHasString ${templateType} ${migrationFiles[LATEST]})
+  typeExistsInCurrent=$(checkIfFileHasString ${templateType} ${FILE_PATH_CURRENT})
 
   if [[ ${typeExistsInCurrent} -eq 1 ]]; then
-      appendFileContent "  $templateType:" ${migrationFiles[LATEST]}
+      appendFileContent "  $templateType:" ${FILE_PATH_CURRENT}
   fi
 }
 
 readConfig() {
-    local yaml_file="${migrationFiles[CONFIG]}"
+    local yaml_file="${FILE_PATH_CONFIG}"
     local prefix="config_"
     eval "$(parse_yaml "$yaml_file" "$prefix")"
     PROJECT=$config_project_template_type
 }
 
 readCurrentVersionYaml() {
-    local yaml_file="${migrationFiles[LATEST]}"
+    local yaml_file="${FILE_PATH_CURRENT}"
     local prefix="current_"
     eval "$(parse_yaml "$yaml_file" "$prefix")"
 }
 
 readHistoryVersionYaml() {
-    local yaml_file="${migrationFiles[ALL]}"
+    local yaml_file="${FILE_PATH_HISTORY}"
     local prefix="history_"
     eval $(parse_yaml "$yaml_file" "$prefix")
 }

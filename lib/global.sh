@@ -1,8 +1,7 @@
-#!/usr/bin/env bash
+##!/usr/bin/env bash
+PROJECT_PATH="./.cache_migrations"
 
-declare -A configFiles
-appVersion=0.0.1
-configFiles[migrations]=".migrations"
-configFiles[currentmigration]=".currentmigration"
-configFiles[config]=".migrationsrc"
-
+declare -a migrationFiles
+FILE_PATH_HISTORY="$PROJECT_PATH/.history"
+FILE_PATH_CURRENT="$PROJECT_PATH/.current"
+FILE_PATH_CONFIG="$PROJECT_PATH/.config"
