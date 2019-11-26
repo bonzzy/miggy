@@ -2,3 +2,6 @@ dist-*
 dist_*
 migration-*.deb
 .idea
+/.cache_migrations/
+/miggy-migration_*.snap
+/miggy-migration_*.xdelta3
