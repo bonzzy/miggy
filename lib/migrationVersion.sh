@@ -15,7 +15,7 @@ pushLocalMigrationVersionToHistory() {
   projectType=$1
   projectVersion=$2
   initIfHistoryEmptyForTemplateType "${projectType}"
-  updatedFileContent=$(sed -e '/'"$projectType":'/a\'$'\n'' \ \ \ \ - '$projectVersion ${FILE_PATH_HISTORY})
+  updatedFileContent=$(sed -e '/'"$projectType":'/a\'$'\n'' \ \ \ \- '$projectVersion ${FILE_PATH_HISTORY})
   setFileContent "${updatedFileContent}" "${FILE_PATH_HISTORY}"
 }
 

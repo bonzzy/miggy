@@ -24,6 +24,7 @@ function migrationVersionExist() {
 
 function pullRepo() {
   echo "Updating repo... $PROJECT_PATH"
+
   if [ -d "$PROJECT_PATH/.git" ]; then
     cd "$PROJECT_PATH"
     git pull
